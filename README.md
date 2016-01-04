@@ -203,5 +203,5 @@ TypeError: can't multiply sequence by non-int of type 'float'**
 5. Sensor evaluation and comparison: http://www.takingspace.org/evaluating-low-cost-gas-sensors/ 
 6. Arduino code for a project that uses many sensors together: https://github.com/empierre/arduino 
 7. Sensor basics: http://playground.arduino.cc/Main/MQGasSensors 
-8. https://en.m.wikipedia.org/wiki/Electrochemical_gas_sensor
-9. http://playground.arduino.cc/Main/MQGasSensors#wiring
+8. About electrochemical gas sensors: https://en.m.wikipedia.org/wiki/Electrochemical_gas_sensor
+9. How to wire gas sensors: http://playground.arduino.cc/Main/MQGasSensors#wiring
