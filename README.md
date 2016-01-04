@@ -159,7 +159,7 @@ Contains further modelling tools
 
 For details regarding the spiking neural model, visit Alan Diamond’s GitHub repository at https://github.com/alandiamond/spinnaker-neuromorphic-classifier. 
 
-For further information regarding this work, contact iulialexandralungu@gmail.com
+For further information regarding this work, contact iulialexandra@ini.uzh.ch
 
 
 
