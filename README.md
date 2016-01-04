@@ -58,7 +58,7 @@ Possible input parameters:
 
 By default, the list of filenames is ['0-1.csv', '1-1.csv', '2-1.csv’], found in the 'recordings' folder. The odour classes I used are ['No odour', 'Ethanol', 'Orange essential oil’]. These parameters can also be changed directly in the script. 
 
-The following parameters can only be modified inside the ModelParams-eNoseClassifier.txt or in the Settings-eNoseClassifier.txt:
+The following parameters can only be modified inside the **ModelParams-eNoseClassifier.txt** or in the **Settings-eNoseClassifier.txt**:
 
 *ModelParams-eNoseClassifier.txt*:
 
