@@ -3,6 +3,7 @@
 
 This work was conducted as part of a lab rotation taking place in the School of Informatics at the University of Sussex, UK,  under the supervision of Dr. Michael Schmuker.
 
+
 ## Acknowledgements:
 
 The spiking neural network classifier used for this project, which includes the BuildAndRunClassifier.py, Classifier.py and ModellingUtils.py files, was created by Dr. Alan Diamond and the original code can be found at: https://github.com/alandiamond/spinnaker-neuromorphic-classifier
@@ -59,17 +60,17 @@ The following parameters can only be modified inside the ModelParams-eNoseClassi
 
 ModelParams-eNoseClassifier.txt:
 
-'MAX_NEURONS_PER_CORE':250,
-'MAX_STDP_NEURONS_PER_CORE':30,
-'CORES_ON_BOARD':64,
-'NUM_CLASSES':3, #number of odour classes. I included the no-odour case
-'NUM_INPUT_NEURONS':3, #number of sensors used
-'NUM_VR':30, #number of total VRs (in this case 10 per sensor)
-'RATE_ALPHA':0.0001, #regulates spiking rate
-'NETWORK_SCALE':3, #regulates network size
-'CLUSTER_SIZE':3, #regulates network size
-'RN_NOISE_RATE_HZ':100,
-'RN_NOISE_SOURCE_POP_SIZE':6,
+- 'MAX_NEURONS_PER_CORE':250,
+- 'MAX_STDP_NEURONS_PER_CORE':30,
+- 'CORES_ON_BOARD':64,
+- 'NUM_CLASSES':3, #number of odour classes. I included the no-odour case
+- 'NUM_INPUT_NEURONS':3, #number of sensors used
+- 'NUM_VR':30, #number of total VRs (in this case 10 per sensor)
+- 'RATE_ALPHA':0.0001, #regulates spiking rate
+- 'NETWORK_SCALE':3, #regulates network size
+- 'CLUSTER_SIZE':3, #regulates network size
+- 'RN_NOISE_RATE_HZ':100,
+- 'RN_NOISE_SOURCE_POP_SIZE':6,
 'WEIGHT_RATECODE_TO_CLUSTER_RN':0.4,
 'MIN_DELAY_RATECODE_TO_CLUSTER_RN':1,
 'MAX_DELAY_RATECODE_TO_CLUSTER_RN':30,
@@ -100,7 +101,7 @@ Settings-eNoseClassifier.txt:
 'NUM_FOLDS':5, # number of folds for cross validation
 'NUM_OBSERVATIONS':12, #total number of files used for training
 'NUM_OBSERVATIONS_TEST':3, #number of files used for testing
-#specify the 2 parameters above even in the case of crossvalidation
+specify the 2 parameters above even in the case of crossvalidation
 'SPIKE_TRAIN_LENGTH':100, #length of each Poisson train created out of one sample value
 'NUM_BASELINE_SAMPLES':100, #number of samples used to calculate the baseline values
 'NUM_LOG_SAMPLES':15, #number of samples taken for each recording
