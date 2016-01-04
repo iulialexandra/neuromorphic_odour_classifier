@@ -15,7 +15,7 @@ Special thanks to Prof. Thomas Nowotny, Dr. Esin Yavuz and Dr. Michael Schmuker 
 
 ## How to use:
 
-1. make_eNose_baseline
+**1. make_eNose_baseline**
 
 Run this script before training and before every subsequent testing phase.
  
@@ -27,13 +27,13 @@ It creates 3 folders if they don’t exist already:
 	- recordingsTrain; contains only the recordings used to train the network
 	- recordingsTest; contains only the recordings used to test the network
 
-The baseline values are subtracted from all the training and testing values. As these values differ from one day to the other and between different parts of the day, it is recommended to calculate the baseline before recording new data for testing. These baseline values have to be manually set in the Settings-eNoseClassifier.txt file. 
+The baseline values are subtracted from all the training and testing values. As these values may differ from one recording to the next, it is recommended to calculate the baseline before recording new data for testing. These baseline values have to be manually set in the *Settings-eNoseClassifier.txt* file. 
 
-2. eNose_logger
+**2. eNose_logger**
 
 Run this script to record data coming from the electronic nose.
 
-If ran without input parameters, it records a number of e-nose samples and saves the data in a ‘test.csv’ file within the ‘recordings’ folder located at the MASTER_PATH specified in the Settings-eNoseClassifier.txt file.
+If ran without input parameters, it records a number of e-nose samples and saves the data in a ‘test.csv’ file within the ‘recordings’ folder located at the MASTER_PATH specified in the *Settings-eNoseClassifier.txt* file.
 
 Possible input parameters:
 	- name of the logger file; specify the name in the format 0-1.csv, 1-1.csv, etc, where the first digit represents the odour class currently being recorded and the second digit is the number of the recording session.
@@ -41,11 +41,11 @@ Possible input parameters:
 	- number of times the e-nose is sampled for each recording session
 	- a boolean indicating whether to do crossvalidation or not
 
-3. run_eNose
+**3. run_eNose**
 
 Run this script to do crossvalidation on the whole data set or one instance of training and testing.
 
-It uses all the parameters found in the ModelParams-eNoseClassifier.txt and Settings-eNoseClassifier.txt files. 
+It uses all the parameters found in the *ModelParams-eNoseClassifier.txt* and *Settings-eNoseClassifier.txt* files. 
 It calls the BuildAndRun Classifier script. 
 It plots raw sensor data, input spike trains and network activity.
 
