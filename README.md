@@ -1,5 +1,5 @@
 
-## Python and Arduino code demonstrating odour classification on the SpiNNaker neuromorphic board.
+# Python and Arduino code demonstrating odour classification on the SpiNNaker neuromorphic board.
 
 This work was conducted as part of a lab rotation taking place in the School of Informatics at the University of Sussex, UK,  under the supervision of Dr. Michael Schmuker.
 
