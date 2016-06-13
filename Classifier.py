@@ -1,4 +1,5 @@
-#author: Alan Diamond. Github repo: https://github.com/alandiamond/spinnaker-neuromorphic-classifier
+# author: Alan Diamond. Github repo: 
+# https://github.com/alandiamond/spinnaker-neuromorphic-classifier
 
 import pylab
 import pyNN.spiNNaker as spynnaker
@@ -27,22 +28,22 @@ cell_params = {'cm': 0.25,
                'v_thresh': -50.0
                }
 
-#----------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 def run(simTime):
     print 'Model run starting at sim time ', spynnaker.get_current_time()
     spynnaker.run(simTime)
     print 'Model run ended at sim time ', spynnaker.get_current_time()
     
-#----------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 def end():
     spynnaker.end();
     
-#----------------------------------------------------------------------------------------------------------------------------
-def setupModel(params, settings, dt, simTime, populationsInput, \
-                populationsNoiseSource, populationsRN, populationsPN,\
+#-------------------------------------------------------------------------------
+def setupModel(params, settings, dt, simTime, populationsInput,
+                populationsNoiseSource, populationsRN, populationsPN,
                 populationsAN, projectionsPNAN):
     
-    maxDelay = max([params['MAX_DELAY_RATECODE_TO_CLUSTER_RN'], \
+    maxDelay = max([params['MAX_DELAY_RATECODE_TO_CLUSTER_RN'],
                     params['MAX_DELAY_CLASS_ACTIVITY_TO_CLUSTER_AN']])
                     
     spynnaker.setup(timestep=dt, min_delay=1, max_delay=maxDelay)        
@@ -51,20 +52,20 @@ def setupModel(params, settings, dt, simTime, populationsInput, \
     
     setupLayerNoiseSource(params, simTime, populationsNoiseSource)
     
-    setupLayerRN(params,neuronModel, cell_params, populationsInput[0],\
+    setupLayerRN(params,neuronModel, cell_params, populationsInput[0],
                  populationsNoiseSource[0], populationsRN)
                     
     setupLayerPN(params, neuronModel, cell_params, populationsRN, populationsPN)
     
-    setupLayerAN(params, settings, neuronModel, cell_params, \
-                 populationsInput[1], populationsNoiseSource[0], populationsPN,\
+    setupLayerAN(params, settings, neuronModel, cell_params,
+                 populationsInput[1], populationsNoiseSource[0], populationsPN,
                  populationsAN, projectionsPNAN)
     
-    printModelConfigurationSummary(params, populationsInput,\
-                                   populationsNoiseSource,\
+    printModelConfigurationSummary(params, populationsInput,
+                                   populationsNoiseSource,
                                    populationsRN, populationsPN, populationsAN)
 
-#----------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 def setupLayerInput(params, settings, populationsInput):
     
     numVR = params['NUM_VR']
@@ -79,9 +80,9 @@ def setupLayerInput(params, settings, populationsInput):
         #where each neuron wil be loaded with the rate code spikes for the
         #VR response over the training set
         spikeDataVR = utils.readSpikeSourceDataFile(spikeSourceVrResponsePath)
-        popRateCodeSpikes = spynnaker.Population(numRatecodeNeurons,\
-                                                 spynnaker.SpikeSourceArray,\
-                                                 spikeDataVR,\
+        popRateCodeSpikes = spynnaker.Population(numRatecodeNeurons,
+                                                 spynnaker.SpikeSourceArray,
+                                                 spikeDataVR,
                                                  label='popRateCodeSpikes')
         populationsInput.append(popRateCodeSpikes)
         
@@ -99,9 +100,9 @@ def setupLayerInput(params, settings, populationsInput):
         spikeDataClass = utils.readSpikeSourceDataFile(spikeSourceActiveClassPath)
         numNeurons = params['NUM_CLASSES']
         
-        popClassActivationSpikes = spynnaker.Population(numNeurons,\
-                                        spynnaker.SpikeSourceArray,\
-                                        spikeDataClass,\
+        popClassActivationSpikes = spynnaker.Population(numNeurons,
+                                        spynnaker.SpikeSourceArray,
+                                        spikeDataClass,
                                         label='popClassActivationSpikes')
                                         
         populationsInput.append(popClassActivationSpikes)
@@ -112,9 +113,9 @@ def setupLayerInput(params, settings, populationsInput):
         #the VR response over the test set
         spikeDataVRTest = utils.readSpikeSourceDataFile(spikeSourceVrResponsePathTest)
         
-        popRateCodeSpikesTest = spynnaker.Population(numRatecodeNeurons, \
-                                                     spynnaker.SpikeSourceArray,\
-                                                     spikeDataVRTest,\
+        popRateCodeSpikesTest = spynnaker.Population(numRatecodeNeurons,
+                                                     spynnaker.SpikeSourceArray,
+                                                     spikeDataVRTest,
                                                      label='popRateCodeSpikes')
         populationsInput.append(popRateCodeSpikesTest)
         
@@ -124,13 +125,13 @@ def setupLayerInput(params, settings, populationsInput):
         #PN layer config routine
         # as this would makae the learning and testing configurations different
         #in PN which would likely make the saved PNAN weight arrays incorrect
-        popClassActivationSpikes = spynnaker.Population(1, neuronModel,\
-                                                        cell_params, \
+        popClassActivationSpikes = spynnaker.Population(1, neuronModel,
+                                                        cell_params,
                                         label='dummy_popClassActivationSpikes') 
         populationsInput.append(popClassActivationSpikes)
 
     
-#----------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 def setupLayerNoiseSource(params, simTime, populationsNoiseSource):
     
     #create a single "noise" population that will be used to generate 
@@ -142,15 +143,15 @@ def setupLayerNoiseSource(params, simTime, populationsNoiseSource):
     numPoissonNeurons = params['RN_NOISE_SOURCE_POP_SIZE'] * \
                         params['NETWORK_SCALE']
                         
-    popPoissionNoiseSource  = spynnaker.Population(numPoissonNeurons, \
-                                                spynnaker.SpikeSourcePoisson, \
-                                                params_poisson_noise,\
+    popPoissionNoiseSource  = spynnaker.Population(numPoissonNeurons,
+                                                spynnaker.SpikeSourcePoisson,
+                                                params_poisson_noise,
                                                 label='popPoissionNoiseSource')
                                                 
     populationsNoiseSource.append(popPoissionNoiseSource)
     
 
-#----------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
     #Setup RN,PN and AN layers 
     #This model uses:-
     #RN: one large RN pop, 
@@ -158,9 +159,9 @@ def setupLayerNoiseSource(params, simTime, populationsNoiseSource):
     #(e.g. 200VR split into 8 popn of 240 neurons, 30 assigned per VR)
     #AN: One popn per class. Only 32 neurons with incoming STDP
     # can be used per core/popn     
-#----------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
-def setupLayerRN(params, neuronModel, cell_params, popRateCodeSpikes, \
+def setupLayerRN(params, neuronModel, cell_params, popRateCodeSpikes,
                  popPoissionNoiseSource, populationsRN):
     
     #create a single RN population divided into virtual clusters one per VR
@@ -173,7 +174,7 @@ def setupLayerRN(params, neuronModel, cell_params, popRateCodeSpikes, \
     rnPopSize = rnClusterSize * numVR
     popName = 'popRN'
     
-    popRN = spynnaker.Population(rnPopSize, neuronModel, cell_params, \
+    popRN = spynnaker.Population(rnPopSize, neuronModel, cell_params,
                                 label=popName)
     populationsRN.append(popRN)
         
@@ -184,8 +185,8 @@ def setupLayerRN(params, neuronModel, cell_params, popRateCodeSpikes, \
     connections = utils.fromList_OneRandomSrcForEachTarget\
                     (popPoissionNoiseSource._size,popRN._size,weight,delay)
                     
-    projPoissonToClusterRN = spynnaker.Projection(popPoissionNoiseSource,\
-                                        popRN, spynnaker.FromListConnector(\
+    projPoissonToClusterRN = spynnaker.Projection(popPoissionNoiseSource,
+                                        popRN, spynnaker.FromListConnector(
                                         connections), target='excitatory')
 
     connections = list()
@@ -195,16 +196,16 @@ def setupLayerRN(params, neuronModel, cell_params, popRateCodeSpikes, \
         weight = params['WEIGHT_RATECODE_TO_CLUSTER_RN']
         firstIndex = vr * rnClusterSize
         lastIndex = firstIndex + rnClusterSize - 1
-        connections += utils.fromList_SpecificNeuronToRange(vr,firstIndex,\
-                       lastIndex,weight,params['MIN_DELAY_RATECODE_TO_CLUSTER_RN'],\
+        connections += utils.fromList_SpecificNeuronToRange(vr,firstIndex,
+                       lastIndex,weight,params['MIN_DELAY_RATECODE_TO_CLUSTER_RN'],
                        params['MAX_DELAY_RATECODE_TO_CLUSTER_RN'])
         
-    projRateToClusterRN = spynnaker.Projection(popRateCodeSpikes, popRN,\
-                          spynnaker.FromListConnector(connections), \
+    projRateToClusterRN = spynnaker.Projection(popRateCodeSpikes, popRN,
+                          spynnaker.FromListConnector(connections),
                           target='excitatory')
         
 
-#----------------------------------------------------------------------------------------------------------------------------            
+#-------------------------------------------------------------------------------           
 def setupLayerPN(params, neuronModel, cell_params, populationsRN, populationsPN):
     
     #create a projection neuron PN cluster population per VR
@@ -223,7 +224,7 @@ def setupLayerPN(params, neuronModel, cell_params, populationsRN, populationsPN)
     numCoresRN = utils.coresRequired(populationsRN,maxNeuronsPerCore)
     #print 'The RN layer is taking up ', numCoresRN, ' cores'
      
-    coresAvailablePN = int(params['CORES_ON_BOARD'] - params['NUM_CLASSES'] - \
+    coresAvailablePN = int(params['CORES_ON_BOARD'] - params['NUM_CLASSES'] -
                         numCoresRN - 3) # 2 x input, 1 x noise source
     #print 'PN layer, no. cores available:' , coresAvailablePN
     
@@ -246,7 +247,8 @@ def setupLayerPN(params, neuronModel, cell_params, populationsRN, populationsPN)
     
     for p in range(numPopPN):
         popName = 'popPN_' + str(p)
-        popPN = spynnaker.Population(pnPopSize, neuronModel, cell_params, label=popName)
+        popPN = spynnaker.Population(pnPopSize, neuronModel, cell_params,
+                                     label=popName)
         #print 'created population ', popName
         populationsPN.append(popPN)
         
@@ -268,25 +270,25 @@ def setupLayerPN(params, neuronModel, cell_params, populationsRN, populationsPN)
              
         pnEndIdx = rnEndIdx - rnStartIdx
  
-        connections = utils.fromList_OneToOne_fromRangeToRange(rnStartIdx,\
+        connections = utils.fromList_OneToOne_fromRangeToRange(rnStartIdx,
                       rnEndIdx,0,pnEndIdx,weightRNPN,delayRNPN, delayRNPN)
-        projClusterRNToClusterPN = spynnaker.Projection(populationsRN[0], \
-                            popPN,spynnaker.FromListConnector(connections),\
+        projClusterRNToClusterPN = spynnaker.Projection(populationsRN[0],
+                            popPN,spynnaker.FromListConnector(connections),
                             target='excitatory')
             
         #within this popn only, connect each PN sub-population VR 
         #"cluster" to inhibit every other
         if vrPerPop > 1:
-            utils.createIntraPopulationWTA(popPN,vrPerPop,weightPNPN,\
+            utils.createIntraPopulationWTA(popPN,vrPerPop,weightPNPN,
                   delayPNPN,connectivityPNPN,True)
     
     #Also connect each PN cluster to inhibit every other cluster
-    utils.createInterPopulationWTA(populationsPN,weightPNPN,delayPNPN,\
+    utils.createInterPopulationWTA(populationsPN,weightPNPN,delayPNPN,
           connectivityPNPN)
     
-#----------------------------------------------------------------------------------------------------------------------------            
-def setupLayerAN(params, settings, neuronModel, cell_params, popClassActivation,\
-                 popPoissionNoiseSource, populationsPN, populationsAN,\
+#-------------------------------------------------------------------------------         
+def setupLayerAN(params, settings, neuronModel, cell_params, popClassActivation,
+                 popPoissionNoiseSource, populationsPN, populationsAN,
                  projectionsPNAN):
     
     #create an Association Neuron AN cluster population per class
@@ -303,7 +305,7 @@ def setupLayerAN(params, settings, neuronModel, cell_params, popClassActivation,
 
     for an in range(numClasses):
         popName = 'popClusterAN_'  + str(an) ;
-        popClusterAN = spynnaker.Population(anClusterSize, neuronModel,\
+        popClusterAN = spynnaker.Population(anClusterSize, neuronModel,
                        cell_params, label=popName)
         populationsAN.append(popClusterAN)
         
@@ -312,20 +314,20 @@ def setupLayerAN(params, settings, neuronModel, cell_params, popClassActivation,
         for pn in range(len(populationsPN)):
             if learning:
                 projLabel = 'Proj_PN' + str(pn) + '_AN' + str(an)
-                projClusterPNToClusterAN = connectClusterPNtoAN(params,\
+                projClusterPNToClusterAN = connectClusterPNtoAN(params,
                                     populationsPN[pn],popClusterAN,projLabel)
                 projectionsPNAN.append(projClusterPNToClusterAN) #keep handle 
                 #to use later for saving off weights at end of learning
             else:
                 #Without plasticity, create PNAN FromList connectors 
                 #using weights saved during learning stage
-                connections = utils.loadListFromFile(getWeightsFilename\
+                connections = utils.loadListFromFile(getWeightsFilename
                               (settings,'PNAN',pn,an))
                 #print 'Loaded weightsList[',pn,',',an,']',connections
                 #print np.shape(connections)
-                projClusterPNToClusterAN = spynnaker.Projection(\
-                        populationsPN[pn], popClusterAN,\
-                        spynnaker.FromListConnector(connections),\
+                projClusterPNToClusterAN = spynnaker.Projection(
+                        populationsPN[pn], popClusterAN,
+                        spynnaker.FromListConnector(connections),
                         target='excitatory')
 
         if learning:
@@ -333,20 +335,20 @@ def setupLayerAN(params, settings, neuronModel, cell_params, popClassActivation,
             #activity during learning in the corresponding class cluster
             weight = params['WEIGHT_CLASS_ACTIVITY_TO_CLUSTER_AN']
             
-            connections = utils.fromList_SpecificNeuronToAll(an,anClusterSize,\
-                weight,params['MIN_DELAY_CLASS_ACTIVITY_TO_CLUSTER_AN'],\
+            connections = utils.fromList_SpecificNeuronToAll(an,anClusterSize,
+                weight,params['MIN_DELAY_CLASS_ACTIVITY_TO_CLUSTER_AN'],
                 params['MAX_DELAY_CLASS_ACTIVITY_TO_CLUSTER_AN'])
                 
-            projClassActivityToClusterAN = spynnaker.Projection(\
-                                        popClassActivation, popClusterAN, \
+            projClassActivityToClusterAN = spynnaker.Projection(
+                                        popClassActivation, popClusterAN,
                 spynnaker.FromListConnector(connections), target='excitatory')
         
     #connect each AN cluster to inhibit every other AN cluster
-    utils.createInterPopulationWTA(populationsAN,params['WEIGHT_WTA_AN_AN'],\
+    utils.createInterPopulationWTA(populationsAN,params['WEIGHT_WTA_AN_AN'],
             params['DELAY_WTA_AN_AN'],float(params['CONNECTIVITY_WTA_AN_AN']))
 
 
-#---------------------------------------------------------------------------------------------------------------------------- 
+#-------------------------------------------------------------------------------
 def connectClusterPNtoAN(params,popClusterPN,popClusterAN, projLabel=''):
     
     #Using custom Hebbian-style plasticity, connect neurons in specfied PN 
@@ -362,27 +364,27 @@ def connectClusterPNtoAN(params,popClusterPN,popClusterAN, projLabel=''):
     wMax = float(params['STDP_WMAX_PN_AN']) 
     gainScaling = float(params['STDP_SCALING_PN_AN']) 
     
-    timingDependence = spynnaker.SpikePairRule(tau_plus=tau, tau_minus=tau,\
+    timingDependence = spynnaker.SpikePairRule(tau_plus=tau, tau_minus=tau,
                         nearest=True)
                         
-    weightDependence = spynnaker.AdditiveWeightDependence(w_min=wMin, \
+    weightDependence = spynnaker.AdditiveWeightDependence(w_min=wMin,
                         w_max=wMax, A_plus=gainScaling, A_minus=-gainScaling)
                         
-    stdp_model = spynnaker.STDPMechanism(timing_dependence = timingDependence,\
+    stdp_model = spynnaker.STDPMechanism(timing_dependence = timingDependence,
                            weight_dependence = weightDependence)
                 
-    probConnector = spynnaker.FixedProbabilityConnector(connectivity, \
-                              weights=startWeightPNAN, delays=delayPNAN, \
+    probConnector = spynnaker.FixedProbabilityConnector(connectivity,
+                              weights=startWeightPNAN, delays=delayPNAN,
                               allow_self_connections=True)
                     
-    projClusterPNToClusterAN = spynnaker.Projection(popClusterPN, \
-                                popClusterAN,probConnector,\
-                                synapse_dynamics = \
-                                spynnaker.SynapseDynamics(slow = stdp_model),\
+    projClusterPNToClusterAN = spynnaker.Projection(popClusterPN,
+                                popClusterAN,probConnector,
+                                synapse_dynamics =
+                                spynnaker.SynapseDynamics(slow = stdp_model),
                                 target='excitatory', label=projLabel)
     return projClusterPNToClusterAN
 
-#----------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 def printParameters(title,params):
     utils.printSeparator()
     print title
@@ -391,8 +393,8 @@ def printParameters(title,params):
         print param, '=', params[param]
     utils.printSeparator()
 
-#----------------------------------------------------------------------------------------------------------------------------
-def printModelConfigurationSummary(params, populationsInput, \
+#-------------------------------------------------------------------------------
+def printModelConfigurationSummary(params, populationsInput,
         populationsNoiseSource, populationsRN, populationsPN, populationsAN):
             
     totalPops = len(populationsInput) + len(populationsNoiseSource) + \
@@ -417,7 +419,7 @@ def printModelConfigurationSummary(params, populationsInput, \
                     pnCores + anCores, ' cores)'
     utils.printSeparator()
 
-#----------------------------------------------------------------------------------------------------------------------------    
+#-------------------------------------------------------------------------------  
 # generate the agreed file name for storing list of connection weights 
 #between two sets of populations
 def getWeightsFilename(settings,prefix,prePopIdx,postPopIdx):
@@ -425,21 +427,21 @@ def getWeightsFilename(settings,prefix,prePopIdx,postPopIdx):
             str(prePopIdx) + '_' + str(postPopIdx) + '.txt'
     return path
     
-#----------------------------------------------------------------------------------------------------------------------------    
+#-------------------------------------------------------------------------------    
 def saveLearntWeightsPNAN(settings,params,projectionsPNAN,numPopsPN,numPopsAN):
     delayPNAN =  int(params['DELAY_PN_AN'])
     projections = iter(projectionsPNAN)
     for an in range(numPopsAN):
         for pn in range(numPopsPN):
             weightsMatrix = projections.next().getWeights(format="array")
-            weightsList = utils.fromList_convertWeightMatrix(weightsMatrix, \
+            weightsList = utils.fromList_convertWeightMatrix(weightsMatrix,
                                                             delayPNAN) 
             #utils.printSeparator()
             #print 'weightsList[',pn,',',an,']',weightsList
-            utils.saveListToFile(weightsList, \
+            utils.saveListToFile(weightsList,
                                 getWeightsFilename(settings,'PNAN',pn, an))
             
-#----------------------------------------------------------------------------------------------------------------------------            
+#-------------------------------------------------------------------------------           
 def saveSpikesAN(settings,populationsAN):
         
     for i in range(len(populationsAN)):
@@ -447,7 +449,7 @@ def saveSpikesAN(settings,populationsAN):
         utils.saveSpikesToFile(populationsAN[i],path)              
         
         
-#----------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # uses the spike counts in AN clusters to return a list of classifier 
 #"winners", one for each observation presentedt in the set. 
 # the winner for each is judged from the highest spike cluster during

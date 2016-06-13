@@ -1,4 +1,4 @@
-#author Iulia-Alexandra Lungu (iulialexandralungu@gmail.com)
+# author Iulia-Alexandra Lungu (iulialexandralungu@gmail.com)
 
 import serial
 import time
@@ -31,23 +31,24 @@ class eNose_logger(object):
         # open the output file (for appending)
         self.out = open(os.path.join(logPath, logFileName), 'w' )
         self.fieldnames = fieldnames
-        self.writer = csv.DictWriter(self.out, fieldnames = fieldnames, dialect = 'excel', quoting = csv.QUOTE_NONNUMERIC)
+        self.writer = csv.DictWriter(self.out, fieldnames = fieldnames, 
+                      dialect = 'excel', quoting = csv.QUOTE_NONNUMERIC)
         self.writer.writeheader()
         self.serialPort = serialPort
         self._connect_arduino()
         
     def _connect_arduino(self):
-        #create the serial connection through the port arduino is connected to
+        # create the serial connection through the port arduino is connected to
         self.serialConnection = serial.Serial(self.serialPort, timeout=2.0)
         print "Arduino connected"
-        #give arduino some time to wake up
+        # give arduino some time to wake up
         time.sleep(2)
-        #clear the buffer
+        # clear the buffer
         self.serialConnection.flushInput()
         
         
     def logSensors(self):
-       #tell arduino to check sensor values once
+       # tell arduino to check sensor values once
        self.serialConnection.write("Sample")
        data = self.serialConnection.readline().strip()
        if data:
@@ -72,8 +73,8 @@ if __name__ == "__main__":
     try:
         
         settingsClassifier = eval(open("Settings-eNoseClassifier.txt").read())
-        #change the name of the file used to record sensor data for each session
-        #and each odour
+        # change the name of the file used to record sensor data for each session
+        # and each odour
         logFileName = 'test.csv'
 
         fieldnames = settingsClassifier['SENSOR_NAMES']
@@ -90,14 +91,15 @@ if __name__ == "__main__":
         if numArgumentsProvided >=3 :
             nrSamples = eval(sys.argv[3]) 
         
-        #by default, all the recordings are saved in the 'recordings' folder
-        #if not using crossvalidation, separate the train and test samples by hand
-        #in the 2 folders created when calling the make_eNose_baseline script
+        # by default, all the recordings are saved in the 'recordings' folder
+        # if not using crossvalidation, separate the train and test samples by 
+        # hand in the 2 folders created when calling the make_eNose_baseline
+        # script
         recFolder = settingsClassifier['CROSSVALIDATION_LOGGER_FOLDER']
         logPath = os.path.join(masterPath, recFolder)
 
         nose = eNose_logger(logPath, logFileName, serialPort, fieldnames)
-        #sample the sensors a'nrSamples' number of times
+        # sample the sensors a'nrSamples' number of times
         for i in range(nrSamples):
             nose.logSensors()
             

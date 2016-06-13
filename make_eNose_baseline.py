@@ -1,4 +1,4 @@
-#author Iulia-Alexandra Lungu (iulialexandralungu@gmail.com)
+# author Iulia-Alexandra Lungu (iulialexandralungu@gmail.com)
 
 import numpy as np
 import os.path
@@ -21,13 +21,13 @@ def baseline_init_eNose():
     nrSamples = settingsClassifier['NUM_BASELINE_SAMPLES']
     nrInputNeurons = paramsClassifier['NUM_INPUT_NEURONS']
 
-    #create folders if they don't exist yet
+    # create folders if they don't exist yet
     recFolder = settingsClassifier['CROSSVALIDATION_LOGGER_FOLDER']
     logPath = os.path.join(masterPath, recFolder)
     if not os.path.exists(logPath): os.makedirs(logPath)
     
-    #if not using crossvalidation, separate your recordings into training
-    #and test ones, by moving them into 2 separate folders
+    # if not using crossvalidation, separate your recordings into training
+    # and test ones, by moving them into 2 separate folders
     trainFolder = settingsClassifier['TRAIN_LOGGER_FOLDER']
     logPath = os.path.join(masterPath, trainFolder)
     if not os.path.exists(logPath): os.makedirs(logPath)
@@ -36,13 +36,13 @@ def baseline_init_eNose():
     logPath = os.path.join(masterPath, testFolder)
     if not os.path.exists(logPath): os.makedirs(logPath)  
     
-    #record baseline samples
+    # record baseline samples
     nose = eNose_logger(masterPath, baselineFileName, serialPort, fieldnames)
     for i in range(nrSamples):
         nose.logSensors()   
     nose.close_connection()
 
-    #calculate the baseline response for each sensor        
+    # calculate the baseline response for each sensor        
     with open(os.path.join(masterPath, baselineFileName), 'rb') as logFile:
         samples = pd.read_csv(logFile)
         baseSamples = np.zeros((nrInputNeurons, nrSamples))

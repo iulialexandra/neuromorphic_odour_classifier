@@ -1,4 +1,4 @@
-#author Iulia-Alexandra Lungu (iulialexandralungu@gmail.com)
+# author Iulia-Alexandra Lungu (iulialexandralungu@gmail.com)
 
 import os
 import fnmatch
@@ -44,7 +44,8 @@ def poisson_spike_generator(rate, spikeLengthSample, timeStep=1):
     Output:
         -spike train, 1 for spikes, 0 for non-spikes
     '''
-    times = np.arange(0, spikeLengthSample, timeStep)	# a vector with each time step	
+    # a vector with each time step  
+    times = np.arange(0, spikeLengthSample, timeStep)	
     vt = [random.random() for i in times]
     #print vt
     #print rate*timeStep
@@ -52,7 +53,8 @@ def poisson_spike_generator(rate, spikeLengthSample, timeStep=1):
     return spikes
 
 
-def sensor_spike_train(filePath, fileName, nrSamples, nrInputNeurons, nrVR, spikeLengthSample, alpha, baselineValues):
+def sensor_spike_train(filePath, fileName, nrSamples, nrInputNeurons, nrVR,
+                       spikeLengthSample, alpha, baselineValues):
     """ Creates Poisson spike trains for each sensor for one recording.
     Input:
         -path of .csv file containing the arduino data for one recording session
@@ -68,25 +70,33 @@ def sensor_spike_train(filePath, fileName, nrSamples, nrInputNeurons, nrVR, spik
     """
     with open(os.path.join(filePath, fileName), 'rb') as logFile:
         samples = pd.read_csv(logFile)
-        #for each sensor, create a Poisson spike train using all the samples
-        #and a 100ms long Poisson spike train for each sample
+        # for each sensor, create a Poisson spike train using all the samples
+        # and a 100ms long Poisson spike train for each sample
         spikeTrains = np.zeros((nrVR, nrSamples*spikeLengthSample))
         for sample in range(nrSamples):
             for idx, neuron in enumerate(range(3, 3+nrInputNeurons)):
-                    normalizedVal = max(0, samples.iloc[sample, neuron]-baselineValues[idx])
+                    normalizedVal = max(0, samples.iloc[sample, neuron]-
+                                        baselineValues[idx])
                     rate = alpha*(normalizedVal/5.)
                     #print rate
                     for vr in range(nrVR/nrInputNeurons):
-                        spikeTrains[idx*(nrVR/nrInputNeurons)+vr, sample*spikeLengthSample:(sample+1)*\
-                             spikeLengthSample] = poisson_spike_generator(rate, spikeLengthSample)      
+                        spikeTrains[idx*(nrVR/nrInputNeurons)+vr,
+                                    sample*spikeLengthSample:(sample+1)*
+                                    spikeLengthSample] = \
+                        poisson_spike_generator(rate, spikeLengthSample)      
         return spikeTrains
                  
                  
-def concatenate_recordings(logPath, fileList, outFileName, odourClassesRecorded, nrSamples, nrInputNeurons, nrVR, spikeLengthSample, alpha, baselineValues):
+def concatenate_recordings(logPath, fileList, outFileName,
+                            odourClassesRecorded, nrSamples,
+                            nrInputNeurons, nrVR, spikeLengthSample,
+                            alpha, baselineValues):
     """Concatenates spike times vectors for all recording session.
     Input:
-        -path of .csv files containing the arduino data for the desired recording sessions
-        -name of .csv files containing the arduino data for the desired recording session
+        -path of .csv files containing the arduino data for the desired
+         recording sessions
+        -name of .csv files containing the arduino data for the desired
+         recording session
         -name of the output file where the concatenated spike times are saved
         -class labels for the recordings to be concatenated
         -number of times the e-nose was sampled during one recording session
@@ -100,22 +110,31 @@ def concatenate_recordings(logPath, fileList, outFileName, odourClassesRecorded,
     """
     spikeTrainsRec = np.zeros((nrVR, nrSamples*spikeLengthSample*len(fileList)))
     for idx, fileName in enumerate(fileList):
-        spikeTrainsRec[:, nrSamples*spikeLengthSample*idx:nrSamples*spikeLengthSample*(idx+1)] = \
-            sensor_spike_train(logPath, fileName, nrSamples, nrInputNeurons, nrVR, spikeLengthSample, alpha, baselineValues)
+        spikeTrainsRec[:, nrSamples*spikeLengthSample*
+                          idx:nrSamples*spikeLengthSample*
+                          (idx+1)] = sensor_spike_train(logPath,
+                                        fileName, nrSamples, nrInputNeurons,
+                                        nrVR, spikeLengthSample,
+                                        alpha, baselineValues)
 
     with open(outFileName, 'wb') as csvfile:
-        #timesWriter = csv.writer(csvfile, dialect = 'excel', delimiter=',', quoting = csv.QUOTE_ALL)
+        # timesWriter = csv.writer(csvfile, dialect = 'excel', delimiter=',',
+        # quoting = csv.QUOTE_ALL)
         for neuron in range(nrVR):
             spikeTimes = np.nonzero(spikeTrainsRec[neuron, :])[0]
             np.savetxt(csvfile, [spikeTimes], delimiter=',', fmt = '%u')
 
 
-def make_class_activation_spikes(classActivationsFile, odourClassesRecorded, maxSimTime):
+def make_class_activation_spikes(classActivationsFile,
+                                 odourClassesRecorded,
+                                 maxSimTime):
     '''Saves the teaching signal for all desired recordings concatenated to file
     Input:
         -the name of the file where the teacher spike times are saved
         -the class labels for the desired recordings 
-        -maximum simulation time for each recording (number of samples for each recording) x (length of Poisson spike train for each sample)
+        -maximum simulation time for each recording 
+        (number of samples for each recording) x 
+        (length of Poisson spike train for each sample)
     Output:
         -saves the teacher signal spikes to file
     '''
@@ -130,7 +149,8 @@ def make_class_activation_spikes(classActivationsFile, odourClassesRecorded, max
             spikes[classes.index(recClass)]=ext
             #classActivations.writerow(spikeTimes)
         for cls in classes:
-            np.savetxt(csvfile, [spikes[classes.index(cls)]], delimiter=',', fmt = '%u')
+            np.savetxt(csvfile, [spikes[classes.index(cls)]], delimiter=',',
+                       fmt = '%u')
         #print spikeTimes
 
 
@@ -143,7 +163,8 @@ def make_labels_file(labelsFilename, odourClassesRecorded):
         -saves the labels to file
     '''
     with open(labelsFilename, 'wb') as csvfile:
-        #classLabels= csv.writer(csvfile, dialect = 'excel', delimiter=',', quoting = csv.QUOTE_ALL)
+        # classLabels= csv.writer(csvfile, dialect = 'excel', delimiter=',',
+        # quoting = csv.QUOTE_ALL)
         np.savetxt(csvfile, [odourClassesRecorded], delimiter=',', fmt = '%u')
 
 
@@ -203,12 +224,16 @@ def cross_validate(paramsClassifier, settingsClassifier, baselineValues):
         odourClassesTrain = [int(fileName[0]) for fileName in trainFiles]
         odourClassesTest = [int(fileName[0]) for fileName in testFiles]
        
-        concatenate_recordings(logPath, trainFiles, spikeSourceVRTrain, \
-            odourClassesTrain, nrSamples, nrInputNeurons, nrVR, spikeLengthSample, alpha, baselineValues)
-        concatenate_recordings(logPath, testFiles, spikeSourceVRTest, \
-            odourClassesTest, nrSamples, nrInputNeurons, nrVR, spikeLengthSample, alpha, baselineValues)
+        concatenate_recordings(logPath, trainFiles, spikeSourceVRTrain,
+                                odourClassesTrain, nrSamples, nrInputNeurons,
+                                nrVR, spikeLengthSample, alpha, baselineValues)
+        concatenate_recordings(logPath, testFiles, spikeSourceVRTest,
+                                odourClassesTest, nrSamples, nrInputNeurons,
+                                nrVR, spikeLengthSample, alpha, baselineValues)
         
-        make_class_activation_spikes(classActivationsFile, odourClassesTrain, maxSimTime)
+        make_class_activation_spikes(classActivationsFile,
+                                     odourClassesTrain,
+                                     maxSimTime)
         
         make_labels_file(classLabelsTrainFile, odourClassesTrain)
         make_labels_file(classLabelsTestFile, odourClassesTest)
@@ -223,7 +248,8 @@ def cross_validate(paramsClassifier, settingsClassifier, baselineValues):
         raw_input("Press Enter to proceed to testing...")
         
         settingsClassifier['LEARNING'] = False
-        scores[0, fold] = eNoseClassifier.runClassifier(paramsClassifier, settingsClassifier, fold)
+        scores[0, fold] = eNoseClassifier.runClassifier(paramsClassifier,
+                            settingsClassifier, fold)
         
         print 'Testing for fold ' + str(fold) + ' completed'
         
@@ -263,8 +289,12 @@ def train_classifier(paramsClassifier, settingsClassifier, baselineValues):
     np.random.shuffle(fileArray)
     odourClassesTrain = [int(fileName[0]) for fileName in fileArray]
     
-    concatenate_recordings(logPath, fileArray, spikeSourceVRTrain, odourClassesTrain, nrSamples, nrInputNeurons, nrVR, spikeLengthSample, alpha, baselineValues)
-    make_class_activation_spikes(classActivationsFile, odourClassesTrain, maxSimTime)
+    concatenate_recordings(logPath, fileArray, spikeSourceVRTrain,
+                            odourClassesTrain, nrSamples, nrInputNeurons,
+                            nrVR, spikeLengthSample, alpha, baselineValues)
+    make_class_activation_spikes(classActivationsFile,
+                                 odourClassesTrain,
+                                maxSimTime)
     make_labels_file(classLabelsTrainFile, odourClassesTrain)
     
     settingsClassifier['LEARNING'] = True
@@ -298,14 +328,17 @@ def test_classifier(paramsClassifier, settingsClassifier, baselineValues):
     fileArray = np.ravel(np.array(fileList))
     np.random.shuffle(fileArray)
     odourClassesTest = [int(fileName[0]) for fileName in fileArray]
-    concatenate_recordings(logPath, fileArray, spikeSourceVRTest, odourClassesTest, nrSamples, nrInputNeurons, nrVR, spikeLengthSample, alpha, baselineValues)
+    concatenate_recordings(logPath, fileArray, spikeSourceVRTest,
+                             odourClassesTest, nrSamples, nrInputNeurons,
+                             nrVR, spikeLengthSample, alpha, baselineValues)
     make_labels_file(classLabelsTestFile, odourClassesTest)
     
     settingsClassifier['LEARNING'] = False
     eNoseClassifier.runClassifier(paramsClassifier, settingsClassifier, None)
     
     
-def plot_sensor_data(logPath, logFileNames, nrInputNeurons, nrSamples, fieldnames, odourNames):
+def plot_sensor_data(logPath, logFileNames, nrInputNeurons, nrSamples,
+                     fieldnames, odourNames):
     '''Plot the raw sensor data, before baseline substraction.
     Input:
         -path of the sensor data file
@@ -323,22 +356,27 @@ def plot_sensor_data(logPath, logFileNames, nrInputNeurons, nrSamples, fieldname
         with open(os.path.join(logPath, logFileName), 'rb') as logFile:
             samples = pd.read_csv(logFile)
             for idx, neuron in enumerate(range(3, 3+nrInputNeurons)):
-                sensorReading[idx, fileIdx*nrSamples:(fileIdx+1)*nrSamples] = samples.iloc[:, neuron]
+                sensorReading[idx, fileIdx*nrSamples:(fileIdx+1)*nrSamples] = \
+                                                    samples.iloc[:, neuron]
                 
                 
     plt.figure(figsize=(20,20))
     
     markers = ['-', '-.', '--']
     for n in range(nrInputNeurons):
-        plt.plot(sensorReading[n, :], label=fieldnames[n + 3], linestyle = markers[n], linewidth = 10) #the first 3 fields are not of interest for this classification
+        # the first 3 fields are not of interest for this classification        
+        plt.plot(sensorReading[n, :], label=fieldnames[n + 3],
+                                     linestyle = markers[n], linewidth = 10) 
     
     handles1, labels1 = plt.gca().get_legend_handles_labels()
     first_legend = plt.legend(handles1, labels1, loc=1, prop={'size':20})
 
 
     for j, odourClass in enumerate(odourClasses):
-        plt.axvspan(j*nrSamples, j*nrSamples+nrSamples, facecolor=colors[int(odourClass)], alpha=0.3)
-        bckndNames[j] = mpatches.Patch(color=colors[int(odourClass)], label=odourNames[int(odourClass)])
+        plt.axvspan(j*nrSamples, j*nrSamples+nrSamples,
+                    facecolor=colors[int(odourClass)], alpha=0.3)
+        bckndNames[j] = mpatches.Patch(color=colors[int(odourClass)],
+                        label=odourNames[int(odourClass)])
 
 
 
@@ -352,7 +390,8 @@ def plot_sensor_data(logPath, logFileNames, nrInputNeurons, nrSamples, fieldname
     plt.close()
     
 
-# def PCA_sensor_data(logPath, logFileNames, nrInputNeurons, nrSamples, fieldnames, odourNames, baselineValues, ax):  
+# def PCA_sensor_data(logPath, logFileNames, nrInputNeurons,
+#                     nrSamples, fieldnames, odourNames, baselineValues, ax):  
 #     sensorReading = np.zeros((nrInputNeurons, nrSamples, len(logFileNames))) 
 #     odourClasses = np.zeros(len(logFileNames))   
     
@@ -365,16 +404,22 @@ def plot_sensor_data(logPath, logFileNames, nrInputNeurons, nrSamples, fieldname
                 
     
 
-#     ax.plot(sensorReading[0,:, 0], sensorReading[1,:, 0], sensorReading[2,:, 0],
-#             'o', markersize=15, color=colors[0], alpha=0.5, label=odourNames[int(odourClasses[0])])
-#     ax.plot(sensorReading[0,:, 1], sensorReading[1,:, 1], sensorReading[2,:, 1],
-#             'o', markersize=15, alpha=0.5, color=colors[1], label=odourNames[int(odourClasses[1])])
-#     ax.plot(sensorReading[0,:, 2], sensorReading[1,:, 2], sensorReading[2,:, 2],
-#             'o', markersize=15, alpha=0.5, color=colors[2], label=odourNames[int(odourClasses[2])])
+#     ax.plot(sensorReading[0,:, 0], sensorReading[1,:, 0],
+#               sensorReading[2,:, 0], 'o', markersize=15, 
+#               color=colors[0], alpha=0.5,
+#               label=odourNames[int(odourClasses[0])])
+#     ax.plot(sensorReading[0,:, 1], sensorReading[1,:, 1],
+#                sensorReading[2,:, 1], 'o', markersize=15, alpha=0.5,
+#                color=colors[1], label=odourNames[int(odourClasses[1])])
+#     ax.plot(sensorReading[0,:, 2], sensorReading[1,:, 2],
+#                sensorReading[2,:, 2], 'o', markersize=15, alpha=0.5,
+#                color=colors[2], label=odourNames[int(odourClasses[2])])
 
      
     
-def plot_spike_sources(filePath, fileName, nrInputNeurons, nrVR, observationTime, totalSimulationTime, classLabels, odourNames):
+def plot_spike_sources(filePath, fileName, nrInputNeurons, nrVR,
+                         observationTime, totalSimulationTime,
+                        classLabels, odourNames):
     '''Plot the Poisson spike source matrix
     Input:
         -path of the spike times file
@@ -382,13 +427,16 @@ def plot_spike_sources(filePath, fileName, nrInputNeurons, nrVR, observationTime
         -number of input neurons (= number of sensors)
         -number of virtual receptors
         -length of the Poisson spike train for each sample
-        -maximum simulation time for each recording (number of samples for each recording) x (length of Poisson spike train for each sample)
+        -maximum simulation time for each recording
+         (number of samples for each recording) 
+         x (length of Poisson spike train for each sample)
         -class labels
         -names of the odours used
     '''
     bckndNames =[[]]*len(odourNames)
     
-    spikeTimes = utils.readSpikeSourceDataFile(os.path.join(filePath, fileName))['spike_times']
+    spikeTimes = utils.readSpikeSourceDataFile(os.path.join(filePath,
+                                                     fileName))['spike_times']
     plt.figure(figsize=(20,20))
     for idx, line in enumerate(spikeTimes):
         for x in line:
@@ -398,7 +446,8 @@ def plot_spike_sources(filePath, fileName, nrInputNeurons, nrVR, observationTime
 
 
     for j, classLabel in enumerate(classLabels):
-        plt.axvspan(j*observationTime, j*observationTime+observationTime, facecolor=colors[int(classLabel)], alpha=0.3)
+        plt.axvspan(j*observationTime, j*observationTime+observationTime,
+                     facecolor=colors[int(classLabel)], alpha=0.3)
         
     for idxO, odour in enumerate(odourNames):
         bckndNames[idxO] = mpatches.Patch(color=colors[idxO], label=odour)
@@ -406,7 +455,8 @@ def plot_spike_sources(filePath, fileName, nrInputNeurons, nrVR, observationTime
     
     plt.legend(handles=bckndNames, loc ='best', prop={'size':20}) 
     plt.xlabel('Simulation time[ms]', fontsize=20)
-    plt.ylabel('%i Virtual receptors per sensor'%(nrVR/nrInputNeurons), fontsize=20)
+    plt.ylabel('%i Virtual receptors per sensor'%(nrVR/nrInputNeurons),
+                 fontsize=20)
     plt.tick_params(labelsize=20)
     plt.title('VR spike times for classes %s'%str(classLabels), fontsize=20)
     
@@ -415,7 +465,7 @@ def plot_spike_sources(filePath, fileName, nrInputNeurons, nrVR, observationTime
 
     plt.close()
 
-#---------------------------------------------------------------------------------------------------------------    
+#-----------------------------------------------------------------------------  
 if __name__ == "__main__":
     paramsClassifier = eval(open("ModelParams-eNoseClassifier.txt").read())
     settingsClassifier  = eval(open("Settings-eNoseClassifier.txt").read())
@@ -463,12 +513,14 @@ if __name__ == "__main__":
     
     logPath = os.path.join(masterPath, plotRecFolder)
     print 'Plotting sensor data..............................................'
-    plot_sensor_data(logPath, odourRecordings, nrInputNeurons, nrSamples, fieldnames, odourNames)
+    plot_sensor_data(logPath, odourRecordings, nrInputNeurons, nrSamples,
+                     fieldnames, odourNames)
 
 
     
     if crossvalidation:
-        scores = cross_validate(paramsClassifier, settingsClassifier, baselineValues) 
+        scores = cross_validate(paramsClassifier, settingsClassifier,
+                                 baselineValues) 
         print scores
         plt.figure()
         plt.bar(range(len(scores[0])), scores[0])
@@ -484,20 +536,24 @@ if __name__ == "__main__":
         print 'Training completed'
         raw_input("Press Enter to proceed to testing...")
         
-#        baselineValues = make_eNose_baseline.baseline_init_eNose()
+        #baselineValues = make_eNose_baseline.baseline_init_eNose()
         test_classifier(paramsClassifier, settingsClassifier, baselineValues)
     
     
 
     
-    #plot VR spike source for training
+    # plot VR spike source for training
     totalSimulationTime = float(observationTime*nrObsTrain)                                                        
     classLabels = utils.loadListFromCsvFile(classLabelsTrain,True)
-    plot_spike_sources(masterPath, spikeSourceVRTrain, nrInputNeurons, nrVR, observationTime, totalSimulationTime, classLabels, odourNames)
+    plot_spike_sources(masterPath, spikeSourceVRTrain, nrInputNeurons,
+                         nrVR, observationTime, totalSimulationTime,
+                         classLabels, odourNames)
     
-    #plot VR spike source for testing
+    # plot VR spike source for testing
     totalSimulationTime = float(observationTime*nrObsTest)                                                        
     classLabels = utils.loadListFromCsvFile(classLabelsTest,True)
-    plot_spike_sources(masterPath, spikeSourceVRTest, nrInputNeurons, nrVR, observationTime, totalSimulationTime, classLabels, odourNames)
+    plot_spike_sources(masterPath, spikeSourceVRTest, nrInputNeurons,
+                         nrVR, observationTime, totalSimulationTime,
+                         classLabels, odourNames)
     
 

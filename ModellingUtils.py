@@ -1,4 +1,4 @@
-#author: Alan Diamond. Github repo: https://github.com/alandiamond/spinnaker-neuromorphic-classifier
+# author: Alan Diamond. Github repo: https://github.com/alandiamond/spinnaker-neuromorphic-classifier
 
 
 import pyNN.spiNNaker as spynnaker

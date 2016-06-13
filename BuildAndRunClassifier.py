@@ -1,4 +1,5 @@
-#author: Alan Diamond. Github repo: https://github.com/alandiamond/spinnaker-neuromorphic-classifier
+# author: Alan Diamond. Github repo:
+# https://github.com/alandiamond/spinnaker-neuromorphic-classifier
 
 
 import matplotlib.pyplot as plt
@@ -21,18 +22,18 @@ def runClassifier(params, settings, fold):
     projectionsPNAN = list() #keep handle to these for saving learnt weights
     
     if settings['LEARNING']:
-        totalSimulationTime = float(settings['OBSERVATION_EXPOSURE_TIME_MS'] * \
+        totalSimulationTime = float(settings['OBSERVATION_EXPOSURE_TIME_MS'] * 
                                 settings['NUM_OBSERVATIONS'])
     else:
-        totalSimulationTime = float(settings['OBSERVATION_EXPOSURE_TIME_MS'] * \
+        totalSimulationTime = float(settings['OBSERVATION_EXPOSURE_TIME_MS'] *
                                 settings['NUM_OBSERVATIONS_TEST'])
         
     print 'Total Simulation Time will be', totalSimulationTime
     
     DT = 1.0 #ms Integration timestep for simulation
     
-    classifier.setupModel(params, settings, DT, totalSimulationTime, \
-                          populationsInput, populationsNoiseSource, \
+    classifier.setupModel(params, settings, DT, totalSimulationTime, 
+                          populationsInput, populationsNoiseSource,
                           populationsRN,populationsPN,populationsAN,projectionsPNAN)
     
     utils.recordPopulations(populationsInput,settings['RECORD_POP_INPUT'])
@@ -55,24 +56,24 @@ def runClassifier(params, settings, fold):
     fig1.suptitle(title, fontsize = 18)
     
     indexOffset = 0
-    indexOffset = 1 + utils.plotAllSpikes(populationsInput,\
-                            totalSimulationTime, indexOffset,\
+    indexOffset = 1 + utils.plotAllSpikes(populationsInput,
+                            totalSimulationTime, indexOffset,
                             settings['RECORD_POP_INPUT'])
                             
-    indexOffset = 1 + utils.plotAllSpikes(populationsNoiseSource,\
-                            totalSimulationTime, indexOffset,\
+    indexOffset = 1 + utils.plotAllSpikes(populationsNoiseSource,
+                            totalSimulationTime, indexOffset,
                             settings['RECORD_POP_NOISE_SOURCE'])
                             
-    indexOffset = 1 + utils.plotAllSpikes(populationsRN, \
-                                          totalSimulationTime,\
+    indexOffset = 1 + utils.plotAllSpikes(populationsRN,
+                                          totalSimulationTime,
                                           indexOffset,settings['RECORD_POP_RN'])
                                           
-    indexOffset = 1 + utils.plotAllSpikes(populationsPN,\
-                                          totalSimulationTime,\
+    indexOffset = 1 + utils.plotAllSpikes(populationsPN,
+                                          totalSimulationTime,
                                           indexOffset,settings['RECORD_POP_PN'])
                                           
-    indexOffset = 1 + utils.plotAllSpikes(populationsAN,\
-                                          totalSimulationTime,\
+    indexOffset = 1 + utils.plotAllSpikes(populationsAN,
+                                          totalSimulationTime,
                                           indexOffset,settings['RECORD_POP_AN'])
                                           
     
@@ -117,7 +118,7 @@ def runClassifier(params, settings, fold):
         #store the weight values learnt via plasticity, these will be reloaded as 
         #static weights for test stage
         classLabels = utils.loadListFromCsvFile(settings['CLASS_LABELS_TRAIN'],True)
-        classifier.saveLearntWeightsPNAN(settings, params, projectionsPNAN,\
+        classifier.saveLearntWeightsPNAN(settings, params, projectionsPNAN,
                                          len(populationsPN),len(populationsAN))
         winningClassesByObservation, winningSpikeCounts = classifier.calculateWinnersAN(settings,populationsAN, classLabels)
         scorePercent = classifier.calculateScore(winningClassesByObservation,classLabels)
